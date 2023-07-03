@@ -1,0 +1,29 @@
+--check0:このオブジェクトの時間を使う,1
+animation_preparation = animation_preparation ~= nil and animation_preparation or {
+    tostring = function(v)
+        local t = type(v)
+        if t =="number" or t == "string" then
+            return v
+        elseif t == "boolean" then
+            return v and "true" or "false"
+        elseif t == "table" then
+            local ret = "{"
+            for i = 1, #v do
+                ret = ret..(i == 1 and "" or ",")..v[i]
+            end
+            return ret .. "}"
+        elseif t == "nil" then
+            return "nil"
+        end
+    end
+}
+animation_preparation[obj.layer] = {}
+animation_preparation[obj.layer].time = obj.time
+if obj.check0 then
+    animation_preparation[obj.layer].thisTime = true
+    animation_preparation[obj.layer].totaltime = obj.totaltime
+    animation_preparation[obj.layer].frame = obj.frame
+    animation_preparation[obj.layer].totalframe = obj.totalframe
+end
+obj.load("framebuffer",0,0,1,1)
+obj.alpha = 0

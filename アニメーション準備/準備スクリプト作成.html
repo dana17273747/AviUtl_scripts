@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>準備スクリプト作成</title>
+    <style>
+        .drag-list li {
+            line-height: 3em;
+            border: 1px solid #cccccc;
+            cursor: pointer;
+        }
+
+        .err-mes {
+            color: red;
+        }
+
+        .none {
+            display: none;
+        }
+    </style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/encoding-japanese/2.0.0/encoding.min.js" integrity="sha512-AhAMtLXTbhq+dyODjwnLcSlytykROxgUhR+gDZmRavVCNj6Gjta5l+8TqGAyLZiNsvJhh3J83ElyhU+5dS2OZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="準備スクリプト作成.js"></script>
+</head>
+
+<body>
+    <button type="button" id="dl">準備スクリプト作成</button>
+    <input type="file" multiple id="file">
+    <ol id="scriptList" class="drag-list">
+        <li id="dammyLI" style="border:0;list-style-type:none;">&nbsp;</li>
+    </ol>
+</body>
+</html>
