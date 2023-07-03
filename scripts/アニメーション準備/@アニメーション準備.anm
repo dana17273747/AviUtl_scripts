@@ -1,0 +1,52 @@
+@準備
+--check0:このオブジェクトの時間を使う,1
+animation_preparation = animation_preparation ~= nil and animation_preparation or {
+    tostring = function(v)
+        local t = type(v)
+        if t =="number" or t == "string" then
+            return v
+        elseif t == "boolean" then
+            return v and "true" or "false"
+        elseif t == "table" then
+            local ret = "{"
+            for i = 1, #v do
+                ret = ret..(i == 1 and "" or ",")..v[i]
+            end
+            return ret .. "}"
+        elseif t == "nil" then
+            return "nil"
+        end
+    end
+}
+animation_preparation[obj.layer] = {}
+animation_preparation[obj.layer].time = obj.getvalue("time")
+if obj.check0 then
+    animation_preparation[obj.layer].thisTime = true
+    animation_preparation[obj.layer].totaltime = obj.totaltime
+    animation_preparation[obj.layer].frame = obj.frame
+    animation_preparation[obj.layer].totalframe = obj.totalframe
+end
+
+@実行
+--track0:準備レイヤー,0,100,0,1
+--dialog:複数レイヤー,local layers={};
+local _layers
+if type(layers) == 'table' and #layers > 0 then
+    _layers = layers
+elseif type(layers) == 'number' then
+    _layers = { layers }
+else
+    _layers = { obj.track0 }
+end
+
+if animation_preparation then
+    for i = 1, #_layers do
+        local layer = _layers[i]
+        if animation_preparation[layer] and (animation_preparation[layer].time == obj.getvalue("layer"..layer..".time")) then
+            local num = #animation_preparation[layer]
+            for j = 1, num do
+                obj.effect(unpack(animation_preparation[layer][j]))
+            end
+        end
+    end
+end
