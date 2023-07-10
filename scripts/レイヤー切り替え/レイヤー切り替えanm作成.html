@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/encoding-japanese/2.0.0/encoding.min.js"
+        integrity="sha512-AhAMtLXTbhq+dyODjwnLcSlytykROxgUhR+gDZmRavVCNj6Gjta5l+8TqGAyLZiNsvJhh3J83ElyhU+5dS2OZw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <textarea></textarea>
+    <label for="reverce">レイヤー順をひっくり返す</label><input type="checkbox" id="reverce">
+    <button type="button" id="sakusei">作成</button>
+    <script>
+        // テキストをSJISでダウンロードさせる
+        function downloadText(fileName, text) {
+            const code = Encoding.stringToCode(text)
+            const u8 = new Uint8Array(Encoding.convert(code, 'SJIS'))
+            const blob = new Blob([u8], { type: 'text/plain' });
+            const aTag = document.createElement('a');
+            aTag.href = URL.createObjectURL(blob);
+            aTag.target = '_blank';
+            aTag.download = fileName;
+            aTag.click();
+            URL.revokeObjectURL(aTag.href);
+        }
+        document.getElementById('sakusei').addEventListener('click', function () {
+            const f = document.getElementById('reverce').checked ? 'unshift' : 'push'
+            const head = []
+            const t = document.querySelector('textarea').value
+            const lines = t.split(/[\r\n]+/).filter(line => !/^\s*$/.test(line))
+            let n = 0
+            let layers = []
+            let values = null
+            lines.forEach(line => {
+                if (/^\s*}/.test(line)) {
+                    console.log(values)
+                    layers.push(values)
+                    values = null
+                } else if (values !== null) {
+                    values[f](line)
+                } else if (line.startsWith('--track0:')) {
+                    head.push(line.replace('track0', 'track' + n++))
+                } else if (/^\s*local values/.test(line)) {
+                    values = []
+                }
+            })
+            let artifact = head.reduce((ret, val) => {
+                ret += '\r\n' + val
+                return ret
+            })
+            n = 0
+            layers.forEach(v => {
+                artifact += '\r\nlocal values = {\r\n'
+                v.forEach(layer => {
+                    artifact += layer + '\r\n'
+                })
+                artifact += '}\r\nPSD:addstate(values, obj.track' + n++ + ')'
+            })
+            downloadText('レイヤー切り替え.anm', artifact)
+        })
+    </script>
+</body>
+
+</html>
