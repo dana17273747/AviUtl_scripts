@@ -34,7 +34,6 @@
             let values = null
             lines.forEach(line => {
                 if (/^\s*}/.test(line)) {
-                    console.log(values)
                     layers.push(values)
                     values = null
                 } else if (values !== null) {
